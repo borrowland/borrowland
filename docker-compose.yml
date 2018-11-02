@@ -10,12 +10,12 @@ services:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: password
     tenants:
-        build: ./najemniki
+        build: ./tenants
         restart: always
         ports:
             - 9999:8080
         volumes:
-            - ./najemniki:/tenants
+            - ./tenants:/tenants
         depends_on:
             - mongo
         environment:
