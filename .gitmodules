@@ -1,0 +1,3 @@
+[submodule "tenants"]
+	path = tenants
+	url = https://github.com/borrowland/tenants

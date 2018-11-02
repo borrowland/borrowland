@@ -1,0 +1,24 @@
+version: "3"
+services:
+    mongo:
+        image: mongo:3.2.21-jessie
+        restart: always
+        command: mongod --port 6666
+        volumes:
+            - ./data:/data
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: password
+    tenants:
+        build: ./najemniki
+        restart: always
+        ports:
+            - 9999:8080
+        volumes:
+            - ./najemniki:/tenants
+        depends_on:
+            - mongo
+        environment:
+            DB_USER: root
+            DB_PASSWORD: password
+            DB_URI: mongo:6666
