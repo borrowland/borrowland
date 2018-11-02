@@ -1,3 +1,24 @@
 [submodule "tenants"]
 	path = tenants
 	url = https://github.com/borrowland/tenants
+[submodule "analytics"]
+	path = analytics
+	url = https://github.com/borrowland/analytics
+[submodule "equipment"]
+	path = equipment
+	url = https://github.com/borrowland/equipment
+[submodule "leasing"]
+	path = leasing
+	url = https://github.com/borrowland/leasing
+[submodule "payment"]
+	path = payment
+	url = https://github.com/borrowland/payment
+[submodule "providers"]
+	path = providers
+	url = https://github.com/borrowland/providers
+[submodule "renting"]
+	path = renting
+	url = https://github.com/borrowland/renting
+[submodule "tracking"]
+	path = tracking
+	url = https://github.com/borrowland/tracking
