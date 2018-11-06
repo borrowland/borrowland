@@ -18,7 +18,6 @@ services:
             - 8080:8080
         volumes:
             - ./tenants:/tenants
-            - ./tenants/node_modules
         depends_on:
             - mongo
         environment:
