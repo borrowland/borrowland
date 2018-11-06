@@ -3,7 +3,9 @@ services:
     mongo:
         image: mongo:3.2.21-jessie
         restart: always
-        command: mongod --port 6666
+        command: mongod --bind_ip 0.0.0.0
+        ports:
+            - 27017:27017
         volumes:
             - ./data:/data
         environment:
@@ -13,7 +15,7 @@ services:
         build: ./tenants
         restart: always
         ports:
-            - 9999:8080
+            - 8080:8080
         volumes:
             - ./tenants:/tenants
             - ./tenants/node_modules
@@ -22,4 +24,4 @@ services:
         environment:
             DB_USER: root
             DB_PASSWORD: password
-            DB_URI: mongo:6666
+            DB_URI: 192.168.99.100:27017
