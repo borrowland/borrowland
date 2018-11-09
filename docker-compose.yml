@@ -15,7 +15,7 @@ services:
         image: quay.io/coreos/etcd:latest
         restart: always
         ports:
-        - 2379:2379
+            - 2379:2379
         command: >-
             /usr/local/bin/etcd
             -name node1
@@ -37,4 +37,7 @@ services:
         environment:
             DB_USER: root
             DB_PASSWORD: password
-            DB_URI: 192.168.99.100:27017
+            DB_URI: mongo:27017
+            ETCD_URL: etcd:2379
+            ETCD_EQUIPMENTENABLED: "false"
+            # add etcd values
