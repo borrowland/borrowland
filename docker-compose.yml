@@ -3,17 +3,33 @@ services:
     mongo:
         image: mongo:3.2.21-jessie
         restart: always
-        command: mongod --port 6666
+        command: mongod --bind_ip 0.0.0.0
+        ports:
+            - 27017:27017
         volumes:
             - ./data:/data
         environment:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: password
+    etcd:
+        image: quay.io/coreos/etcd:latest
+        restart: always
+        ports:
+            - 2379:2379
+        command: >-
+            /usr/local/bin/etcd
+            -name node1
+            -advertise-client-urls http://etcd:2379
+            -listen-client-urls http://0.0.0.0:2379
+            -initial-advertise-peer-urls http://etcd:2380
+            -listen-peer-urls http://0.0.0.0:2380
+            -initial-cluster node1=http://etcd:2380
+            -cors="*"
     tenants:
         build: ./tenants
         restart: always
         ports:
-            - 9999:8080
+            - 8080:8080
         volumes:
             - ./tenants:/tenants
         depends_on:
@@ -21,4 +37,7 @@ services:
         environment:
             DB_USER: root
             DB_PASSWORD: password
-            DB_URI: mongo:6666
+            DB_URI: mongo:27017
+            ETCD_URL: etcd:2379
+            ETCD_EQUIPMENTENABLED: "false"
+            # add etcd values
