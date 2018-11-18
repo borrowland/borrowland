@@ -16,6 +16,8 @@ services:
         restart: always
         ports:
             - 2379:2379
+        volumes:
+            - ./etcd-data:/etcd-data
         command: >-
             /usr/local/bin/etcd
             -name node1
@@ -34,6 +36,7 @@ services:
             - ./tenants:/tenants
         depends_on:
             - mongo
+            - etcd
         environment:
             DB_USER: root
             DB_PASSWORD: password
@@ -41,3 +44,19 @@ services:
             ETCD_URL: etcd:2379
             ETCD_EQUIPMENTENABLED: "false"
             # add etcd values
+    equipment:
+        build: ./equipment
+        restart: always
+        ports:
+            - 8081:8080
+        volumes:
+            - ./equipment:/equipment
+        depends_on:
+            - mongo
+            - etcd
+        environment:
+            DB_USER: root
+            DB_PASSWORD: password
+            DB_URI: mongo:27017
+            ETCD_URL: etcd:2379
+            ETCD_NUMEQUIPMENTPERTENANTGET: 20
