@@ -1,6 +1,6 @@
 version: "3"
 services:
-    mongo:
+    mongo-tenants:
         image: mongo:3.2.21-jessie
         restart: always
         command: mongod --bind_ip 0.0.0.0
@@ -9,7 +9,18 @@ services:
         volumes:
             - ./data:/data
         environment:
-            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_USERNAME: tenants
+            MONGO_INITDB_ROOT_PASSWORD: password
+    mongo-equipment:
+        image: mongo:3.2.21-jessie
+        restart: always
+        command: mongod --bind_ip 0.0.0.0
+        ports:
+            - 27018:27017
+        volumes:
+            - ./data:/data
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: equipment
             MONGO_INITDB_ROOT_PASSWORD: password
     etcd:
         image: quay.io/coreos/etcd:latest
@@ -35,12 +46,12 @@ services:
         volumes:
             - ./tenants:/tenants
         depends_on:
-            - mongo
+            - mongo-tenants
             - etcd
         environment:
-            DB_USER: root
+            DB_USER: tenants
             DB_PASSWORD: password
-            DB_URI: mongo:27017
+            DB_URI: mongo-tenants:27017
             ETCD_URL: etcd:2379
             ETCD_EQUIPMENTENABLED: "false"
             # add etcd values
@@ -52,11 +63,11 @@ services:
         volumes:
             - ./equipment:/equipment
         depends_on:
-            - mongo
+            - mongo-equipment
             - etcd
         environment:
-            DB_USER: root
+            DB_USER: equipment
             DB_PASSWORD: password
-            DB_URI: mongo:27017
+            DB_URI: mongo-equipment:27017
             ETCD_URL: etcd:2379
             ETCD_NUMEQUIPMENTPERTENANTGET: 20
