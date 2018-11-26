@@ -38,6 +38,7 @@ services:
             -listen-peer-urls http://0.0.0.0:2380
             -initial-cluster node1=http://etcd:2380
             -cors="*"
+
     tenants:
         build: ./tenants
         restart: always
@@ -49,12 +50,14 @@ services:
             - mongo-tenants
             - etcd
         environment:
+            ENVIRONMENT: dev
+            VERSION: v1
             DB_USER: tenants
             DB_PASSWORD: password
             DB_URI: mongo-tenants:27017
             ETCD_URL: etcd:2379
             ETCD_EQUIPMENTENABLED: "false"
-            # add etcd values
+
     equipment:
         build: ./equipment
         restart: always
@@ -66,6 +69,28 @@ services:
             - mongo-equipment
             - etcd
         environment:
+            ENVIRONMENT: dev
+            VERSION: v1
+            HOST_PORT: 8081
+            DB_USER: equipment
+            DB_PASSWORD: password
+            DB_URI: mongo-equipment:27017
+            ETCD_URL: etcd:2379
+            ETCD_NUMEQUIPMENTPERTENANTGET: 20
+    equipment2:
+        build: ./equipment
+        restart: always
+        ports:
+            - 8082:8080
+        volumes:
+            - ./equipment:/equipment
+        depends_on:
+            - mongo-equipment
+            - etcd
+        environment:
+            ENVIRONMENT: dev
+            VERSION: v1
+            HOST_PORT: 8082
             DB_USER: equipment
             DB_PASSWORD: password
             DB_URI: mongo-equipment:27017
