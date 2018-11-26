@@ -71,7 +71,8 @@ services:
         environment:
             ENVIRONMENT: dev
             VERSION: v1
-            HOST_PORT: 8081
+            HOST: equipment
+            HOST_PORT: 8080
             DB_USER: equipment
             DB_PASSWORD: password
             DB_URI: mongo-equipment:27017
@@ -90,7 +91,8 @@ services:
         environment:
             ENVIRONMENT: dev
             VERSION: v1
-            HOST_PORT: 8082
+            HOST: equipment2
+            HOST_PORT: 8080
             DB_USER: equipment
             DB_PASSWORD: password
             DB_URI: mongo-equipment:27017
