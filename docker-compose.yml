@@ -49,6 +49,7 @@ services:
             HOST: tenants
             HOST_PORT: 8080
             ETCD_EQUIPMENTENABLED: "false"
+            ETCD_PREF_EQUI_VER: "v1"
     leasing:
         #image: mkoplan/leasing:0.0.1
         build: ./leasing
@@ -56,7 +57,7 @@ services:
         ports:
             - 8082:8080
         volumes:
-            - ./tenants:/tenants
+            - ./leasing:/leasing
         depends_on:
             - mongo
             - etcd
@@ -86,6 +87,28 @@ services:
             ENVIRONMENT: dev
             VERSION: v1
             HOST: equipment
+            HOST_PORT: 8080
+            DB_USER: borrowland
+            DB_PASSWORD: password
+            DB_URI: mongo:27017
+            ETCD_URL: etcd:2376
+            ETCD_NUMEQUIPMENTPERTENANTGET: 20
+
+    equipment2:
+        #image: mkoplan/equipment:0.5
+        build: ./equipment
+        restart: always
+        ports:
+            - 8088:8080
+        volumes:
+            - ./equipment:/equipment
+        depends_on:
+            - mongo
+            - etcd
+        environment:
+            ENVIRONMENT: dev
+            VERSION: v2
+            HOST: equipment2
             HOST_PORT: 8080
             DB_USER: borrowland
             DB_PASSWORD: password
