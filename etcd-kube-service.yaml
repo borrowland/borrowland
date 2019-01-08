@@ -9,10 +9,12 @@ metadata:
     io.kompose.service: etcd
   name: etcd
 spec:
+  type: NodePort
   ports:
     - name: "2379"
       port: 2379
       targetPort: 2379
+      nodePort: 30004
   selector:
     io.kompose.service: etcd
 status:
