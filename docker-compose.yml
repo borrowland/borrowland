@@ -1,100 +1,99 @@
 version: "3"
 services:
-    mongo-tenants:
-        image: mongo:3.2.21-jessie
-        restart: always
-        command: mongod --bind_ip 0.0.0.0
-        ports:
-            - 27017:27017
-        volumes:
-            - ./data:/data
-        environment:
-            MONGO_INITDB_ROOT_USERNAME: tenants
-            MONGO_INITDB_ROOT_PASSWORD: password
-    mongo-equipment:
-        image: mongo:3.2.21-jessie
-        restart: always
-        command: mongod --bind_ip 0.0.0.0
-        ports:
-            - 27018:27017
-        volumes:
-            - ./data:/data
-        environment:
-            MONGO_INITDB_ROOT_USERNAME: equipment
-            MONGO_INITDB_ROOT_PASSWORD: password
-    etcd:
-        image: quay.io/coreos/etcd:latest
-        restart: always
-        ports:
-            - 2379:2379
-        volumes:
-            - ./etcd-data:/etcd-data
-        command: >-
-            /usr/local/bin/etcd
-            -name node1
-            -advertise-client-urls http://etcd:2379
-            -listen-client-urls http://0.0.0.0:2379
-            -initial-advertise-peer-urls http://etcd:2380
-            -listen-peer-urls http://0.0.0.0:2380
-            -initial-cluster node1=http://etcd:2380
-            -cors="*"
+  mongo-tenants:
+    image: mongo:3.2.21-jessie
+    restart: always
+    command: mongod --bind_ip 0.0.0.0
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data:/data
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: tenants
+      MONGO_INITDB_ROOT_PASSWORD: password
+  mongo-equipment:
+    image: mongo:3.2.21-jessie
+    restart: always
+    command: mongod --bind_ip 0.0.0.0
+    ports:
+      - 27018:27017
+    volumes:
+      - ./data:/data
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: equipment
+      MONGO_INITDB_ROOT_PASSWORD: password
+  etcd:
+    image: quay.io/coreos/etcd:latest
+    restart: always
+    ports:
+      - 2379:2379
+    volumes:
+      - ./etcd-data:/etcd-data
+    command: >-
+      /usr/local/bin/etcd
+      -name node1
+      -advertise-client-urls http://etcd:2379
+      -listen-client-urls http://0.0.0.0:2379
+      -initial-advertise-peer-urls http://etcd:2380
+      -listen-peer-urls http://0.0.0.0:2380
+      -initial-cluster node1=http://etcd:2380
+      -cors="*"
 
-    tenants:
-        build: ./tenants
-        restart: always
-        ports:
-            - 8080:8080
-        volumes:
-            - ./tenants:/tenants
-        depends_on:
-            - mongo-tenants
-            - etcd
-        environment:
-            ENVIRONMENT: dev
-            VERSION: v1
-            DB_USER: tenants
-            DB_PASSWORD: password
-            DB_URI: mongo-tenants:27017
-            ETCD_URL: etcd:2379
-            ETCD_EQUIPMENTENABLED: "false"
+  tenants:
+    image: mkoplan/tenants:0.5
+    restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - ./tenants:/tenants
+    depends_on:
+      - mongo-tenants
+      - etcd
+    environment:
+      ENVIRONMENT: dev
+      VERSION: v1
+      DB_USER: tenants
+      DB_PASSWORD: password
+      DB_URI: mongo-tenants:27017
+      ETCD_URL: etcd:2379
+      ETCD_EQUIPMENTENABLED: "false"
+  leasing:
+    image: mkoplan/leasing:0.0.1
+    restart: always
+    ports:
+      - 8082:8080
+    volumes:
+      - ./tenants:/tenants
+    depends_on:
+      - mongo-tenants
+      - etcd
+    environment:
+      ENVIRONMENT: dev
+      VERSION: v1
+      DB_USER: tenants
+      DB_PASSWORD: password
+      DB_URI: mongo-tenants:27017
+      ETCD_URL: etcd:2379
+      ETCD_EQUIPMENTENABLED: "false"
 
-    equipment:
-        build: ./equipment
-        restart: always
-        ports:
-            - 8081:8080
-        volumes:
-            - ./equipment:/equipment
-        depends_on:
-            - mongo-equipment
-            - etcd
-        environment:
-            ENVIRONMENT: dev
-            VERSION: v1
-            HOST: equipment
-            HOST_PORT: 8080
-            DB_USER: equipment
-            DB_PASSWORD: password
-            DB_URI: mongo-equipment:27017
-            ETCD_URL: etcd:2379
-            ETCD_NUMEQUIPMENTPERTENANTGET: 20
-    equipment2:
-        build: ./equipment
-        restart: always
-        ports:
-            - 8082:8080
-        volumes:
-            - ./equipment:/equipment
-        depends_on:
-            - mongo-equipment
-            - etcd
-        environment:
-            ENVIRONMENT: dev
-            VERSION: v1
-            HOST: equipment2
-            HOST_PORT: 8080
-            DB_USER: equipment
-            DB_PASSWORD: password
-            DB_URI: mongo-equipment:27017
-            ETCD_URL: etcd:2379
-            ETCD_NUMEQUIPMENTPERTENANTGET: 20
+  equipment:
+    image: mkoplan/equipment:0.5
+    restart: always
+    ports:
+      - 8081:8080
+    volumes:
+      - ./equipment:/equipment
+    depends_on:
+      - mongo-equipment
+      - etcd
+    environment:
+      ENVIRONMENT: dev
+      VERSION: v1
+      HOST: equipment
+      HOST_PORT: 8080
+      DB_USER: equipment
+      DB_PASSWORD: password
+      DB_URI: mongo-equipment:27017
+      ETCD_URL: etcd:2379
+      ETCD_NUMEQUIPMENTPERTENANTGET: 20
+

@@ -22,3 +22,6 @@
 [submodule "tracking"]
 	path = tracking
 	url = https://github.com/borrowland/tracking
+[submodule "authentication"]
+	path = authentication
+	url = https://github.com/borrowland/authentication

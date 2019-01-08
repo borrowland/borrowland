@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml
+    kompose.version: 1.17.0 (a74acad)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: etcd
+  name: etcd
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: etcd
+    spec:
+      containers:
+        - args:
+            - /usr/local/bin/etcd
+            - -name
+            - node1
+            - -advertise-client-urls
+            - http://etcd:2379
+            - -listen-client-urls
+            - http://0.0.0.0:2379
+            - -initial-advertise-peer-urls
+            - http://etcd:2380
+            - -listen-peer-urls
+            - http://0.0.0.0:2380
+            - -initial-cluster
+            - node1=http://etcd:2380
+            - -cors=*
+          image: quay.io/coreos/etcd:latest
+          name: etcd
+          ports:
+            - containerPort: 2379
+          resources: {}
+      restartPolicy: Always
+status: {}
