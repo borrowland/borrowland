@@ -6,14 +6,14 @@ metadata:
     kompose.version: 1.17.0 (a74acad)
   creationTimestamp: null
   labels:
-    io.kompose.service: mongo-tenants
-  name: mongo-tenants
+    io.kompose.service: mongo
+  name: mongo
 spec:
   ports:
     - name: "27017"
       port: 27017
       targetPort: 27017
   selector:
-    io.kompose.service: mongo-tenants
+    io.kompose.service: mongo
 status:
   loadBalancer: {}

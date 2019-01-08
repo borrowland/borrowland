@@ -15,22 +15,22 @@ services:
         image: quay.io/coreos/etcd:latest
         restart: always
         ports:
-            - 2376:2376
+            - 2379:2379
         volumes:
             - ./etcd-data:/etcd-data
         command: >-
             /usr/local/bin/etcd
             -name node1
-            -advertise-client-urls http://etcd:2376
-            -listen-client-urls http://0.0.0.0:2376
+            -advertise-client-urls http://etcd:2379
+            -listen-client-urls http://0.0.0.0:2379
             -initial-advertise-peer-urls http://etcd:2380
             -listen-peer-urls http://0.0.0.0:2380
             -initial-cluster node1=http://etcd:2380
             -cors="*"
 
     tenants:
-        #image: mkoplan/tenants:0.5
-        build: ./tenants
+        image: mkoplan/tenants:0.5.2
+#        build: ./tenants
         restart: always
         ports:
             - 8080:8080
@@ -45,14 +45,14 @@ services:
             DB_USER: borrowland
             DB_PASSWORD: password
             DB_URI: mongo:27017
-            ETCD_URL: etcd:2376
+            ETCD_URL: etcd:2379
             HOST: tenants
             HOST_PORT: 8080
             ETCD_EQUIPMENTENABLED: "false"
             ETCD_PREF_EQUI_VER: "v1"
     leasing:
-        #image: mkoplan/leasing:0.0.1
-        build: ./leasing
+        image: mkoplan/leasing:0.0.3
+#        build: ./leasing
         restart: always
         ports:
             - 8082:8080
@@ -67,14 +67,14 @@ services:
             DB_USER: borrowland
             DB_PASSWORD: password
             DB_URI: mongo:27017
-            ETCD_URL: etcd:2376
+            ETCD_URL: etcd:2379
             HOST: leasing
             HOST_PORT: 8080
             ETCD_EQUIPMENTENABLED: "false"
 
     equipment:
-        #image: mkoplan/equipment:0.5
-        build: ./equipment
+        image: mkoplan/equipment:0.5.1
+#        build: ./equipment
         restart: always
         ports:
             - 8081:8080
@@ -91,12 +91,12 @@ services:
             DB_USER: borrowland
             DB_PASSWORD: password
             DB_URI: mongo:27017
-            ETCD_URL: etcd:2376
+            ETCD_URL: etcd:2379
             ETCD_NUMEQUIPMENTPERTENANTGET: 20
 
     equipment2:
-        #image: mkoplan/equipment:0.5
-        build: ./equipment
+        image: mkoplan/equipment:0.5.1
+#        build: ./equipment
         restart: always
         ports:
             - 8088:8080
